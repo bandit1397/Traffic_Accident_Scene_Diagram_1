@@ -1767,19 +1767,19 @@ const MAP_STYLES = {
   simple: {
     label: '심플 (도로·건물 위주)',
     url: 'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
-    options: { subdomains: 'abc', maxNativeZoom: 18, maxZoom: 22,
+    options: { subdomains: 'abc', maxNativeZoom: 18, maxZoom: 26,
                attribution: '© OpenStreetMap 기여자, HOT' }
   },
   standard: {
     label: '표준 지도 (OSM)',
     url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-    options: { maxNativeZoom: 19, maxZoom: 22,
+    options: { maxNativeZoom: 19, maxZoom: 26,
                attribution: '© OpenStreetMap 기여자' }
   },
   aerial: {
     label: '항공사진',
     url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-    options: { maxNativeZoom: 19, maxZoom: 22,
+    options: { maxNativeZoom: 19, maxZoom: 26,
                attribution: '항공사진 © Esri' }
   }
 };
@@ -1805,7 +1805,7 @@ function initOsmMap(){
     center: [37.5665, 126.9780],   // 기본값: 서울시청
     zoom: 17,
     minZoom: 2,
-    maxZoom: 22,
+    maxZoom: 26,
     zoomControl: true,
     attributionControl: false,
     scrollWheelZoom: true,        // PC: 마우스 휠로 확대/축소
