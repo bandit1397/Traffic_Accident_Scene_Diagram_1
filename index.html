@@ -133,6 +133,7 @@ h1 {
   border-radius:14px;
   max-width:92%;
   text-align:center;
+  cursor:pointer;      /* 탭하면 숨길 수 있음 */
 }
 #map.navigating #mapHint { display:block; }
 
@@ -1094,17 +1095,17 @@ makePanelDraggable(panel);
    지도 프레임 밖으로 완전히 나가지 않도록 클램프. */
 function makeMapBarDraggable(bar, grip){
   let dragging = false, sx = 0, sy = 0, ox = 0, oy = 0;
-  const mapEl = document.getElementById('map');
 
   bar.addEventListener('pointerdown', e=>{
     // 그립이 아니고 컨트롤 위에서 시작했으면 무시 (검색·버튼 정상 동작)
     if(e.target !== grip && e.target.closest('input, button, select, textarea')) return;
 
+    // 뷰포트 기준 고정으로 전환 → 지도 프레임(overflow:hidden) 밖으로도 자유롭게 이동 가능
     const bR = bar.getBoundingClientRect();
-    const mR = mapEl.getBoundingClientRect();
+    bar.style.position = 'fixed';
     bar.style.transform = 'none';
-    ox = bR.left - mR.left;
-    oy = bR.top  - mR.top;
+    ox = bR.left;
+    oy = bR.top;
     bar.style.left = ox + 'px';
     bar.style.top  = oy + 'px';
     sx = e.clientX; sy = e.clientY;
@@ -1115,13 +1116,13 @@ function makeMapBarDraggable(bar, grip){
 
   bar.addEventListener('pointermove', e=>{
     if(!dragging) return;
-    const mW = mapEl.clientWidth, mH = mapEl.clientHeight;
+    const vw = window.innerWidth, vh = window.innerHeight;
     const bW = bar.offsetWidth,   bH = bar.offsetHeight;
-    const KEEP = 48;   // 화면에 항상 남길 최소 크기
+    const KEEP = 40;   // 화면 밖으로 완전히 사라지지 않도록 남길 최소 여백
     let nx = ox + e.clientX - sx;
     let ny = oy + e.clientY - sy;
-    nx = Math.max(KEEP - bW, Math.min(mW - KEEP, nx));
-    ny = Math.max(0,          Math.min(mH - Math.min(bH, 40), ny));
+    nx = Math.max(KEEP - bW, Math.min(vw - KEEP, nx));
+    ny = Math.max(0,          Math.min(vh - KEEP, ny));
     bar.style.left = nx + 'px';
     bar.style.top  = ny + 'px';
   });
@@ -1137,6 +1138,11 @@ makeMapBarDraggable(
   document.getElementById('mapNavBar'),
   document.getElementById('mapNavGrip')
 );
+
+// 지도 조작 안내 문구는 탭하면 숨김 (다시 지도 이동 모드를 열면 재표시)
+document.getElementById('mapHint').addEventListener('click', function(){
+  this.style.display = (this.style.display === 'none') ? '' : 'none';
+});
 
 
 /* ===== 공통 ===== */
@@ -1759,7 +1765,9 @@ let kakaoMapObj = null;
 let kakaoReady = false;
 
 function setMapHint(text){
-  document.getElementById('mapHint').textContent = text || '';
+  const hintEl = document.getElementById('mapHint');
+  hintEl.textContent = text || '';
+  hintEl.style.display = '';   // 새 안내문구를 띄울 때는 항상 다시 보이도록 초기화
 }
 
 /* ---------- 지도 스타일 (OSM, 모두 키 불필요) ---------- */
